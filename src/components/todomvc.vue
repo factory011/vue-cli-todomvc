@@ -4,9 +4,9 @@
       <h1>todos</h1>
       <input
         class="new-todo"
-        placeholder="What needs to be done?"
         v-model="addLabel"
         @keyup.enter="doneAdd()"
+        placeholder="What needs to be done?"
         autofocus
       >
     </header>
@@ -26,7 +26,6 @@
           </div>
           <input
             class="edit"
-            ref="test"
             v-model="item.title"
             v-todo-focus="true"
             @blur.prevent="doneEdit(item)"
@@ -48,10 +47,13 @@
 <script>
 export default {
   data () {
+    // 数据集合
     let queryList = []
+    // 判断是否有本地数据，有就读取本地的
     if (localStorage.getItem('todo')) {
       queryList = JSON.parse(localStorage.getItem('todo'))
     }
+    // 未完成的数量
     let num = 0
     queryList.forEach(item => {
       if (!item.completed) {
@@ -66,23 +68,33 @@ export default {
     }
   },
   methods: {
+    /**
+     * 编辑
+     */
     edit (item) {
       this.todo.forEach(res => {
         if (res.id === item.id) {
           res = item
         }
       })
-      console.log(item, this.$refs.test)
       item.isEditing = true
     },
+    /**
+     * 编辑完成
+     */
     doneEdit (item) {
       localStorage.setItem('todo', JSON.stringify(this.todo))
       item.isEditing = false
-      console.log(item)
     },
+    /**
+     * 取消编辑
+     */
     cancelEdit (item) {
       item.isEditing = false
     },
+    /**
+     * 添加
+     */
     doneAdd () {
       let lastId = 0
       if (this.todo.length === 0) {
@@ -99,6 +111,9 @@ export default {
       this.addLabel = ''
       localStorage.setItem('todo', JSON.stringify(this.todo))
     },
+    /**
+     * 删除
+     */
     doneDelete (item) {
       let arr = this.todo.filter(val => {
         return val.id !== item.id
@@ -106,6 +121,9 @@ export default {
       this.todo = arr
       localStorage.setItem('todo', JSON.stringify(this.todo))
     },
+    /**
+     * 全选
+     */
     selectAll () {
       if (this.selectStatus) {
         this.todo.forEach(item => {
@@ -119,6 +137,9 @@ export default {
         this.selectStatus = true
       }
     },
+    /**
+     * 清除已完成
+     */
     clearDone () {
       let arr = this.todo.filter(item => {
         return !item.completed
@@ -127,6 +148,9 @@ export default {
       localStorage.setItem('todo', JSON.stringify(this.todo))
     }
   },
+  /**
+   * 自定义，input双击后聚焦
+   */
   directives: {
     'todo-focus': function (el, binding) {
       if (binding.value) {
@@ -134,6 +158,9 @@ export default {
       }
     }
   },
+  /**
+   * 监听数据变化
+   */
   watch: {
     todo: {
       handler () {
