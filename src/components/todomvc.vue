@@ -102,14 +102,16 @@ export default {
       } else {
         lastId = this.todo[0].id + 1
       }
-      this.todo.unshift({
-        id: lastId,
-        title: this.addLabel,
-        completed: false,
-        isEditing: false
-      })
-      this.addLabel = ''
-      localStorage.setItem('todo', JSON.stringify(this.todo))
+      if (this.addLabel.length > 0) {
+        this.todo.unshift({
+          id: lastId,
+          title: this.addLabel,
+          completed: false,
+          isEditing: false
+        })
+        this.addLabel = ''
+        localStorage.setItem('todo', JSON.stringify(this.todo))
+      }
     },
     /**
      * 删除
